@@ -1,4 +1,7 @@
 <?php
+
+namespace vendor\core;
+
 class Router {
 
     /*
@@ -28,7 +31,7 @@ class Router {
                 foreach ($matches as $key => $value)
                 {
                     if ($key == 1){
-                        $route['controller'] = $value;
+                        $route['controller'] = ucwords($value);
                     } else if ($key == 2) {
                         $route['action'] = $value;
                     }
@@ -41,18 +44,16 @@ class Router {
     }
 
     public static function dispatch($url) {
+            $url = self::getCleanQuery($url);
         if (self::checkRoute($url)){
-            $controller = self::$route['controller'];
-            $file = "app/controllers/$controller.php";
-            if (is_file($file)){
-                include_once $file;
-            }
+            $controller = 'app\controllers\\' . self::$route['controller'] . 'Controller';
             if (class_exists($controller)){
-                $controllerObject = new $controller;
+                $controllerObject = new $controller(self::$route);
                 $action = self::$route['action'];
                 $action = self::camelCaseForAction($action) . 'Action';
                 if (method_exists($controllerObject, $action)){
                     $controllerObject->$action();
+                    $controllerObject->render();
                 } else {
                     echo "Method <b>$controller::$action</b> does not exist";
                 }
@@ -60,8 +61,7 @@ class Router {
                 echo "Controller <b>$controller</b> does not exist";
             }
         } else {
-            echo 'kekt';
-          // header('Location: ' . $_SERVER['HTTP_HOST'],true, 301);
+            include 'public/404.html';
         }
     }
 
@@ -71,6 +71,14 @@ class Router {
         $str = str_replace(' ', '',$str);
         $str = lcfirst($str);
         return ($str);
+    }
+
+    protected static function getCleanQuery($url){
+        if ($url) {
+            $params = explode('&', $url, 2);
+            return (rtrim($params[0], '/'));
+        }
+        return ('');
     }
 }
 ?>
