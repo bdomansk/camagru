@@ -16,8 +16,14 @@ class Database {
         ];
         $this->pdo = new \PDO($database['dsn'], $database['user'], $database['pass'], $options);
         $this->pdo->exec("CREATE DATABASE IF NOT EXISTS " . $database['name']);
+
         $dsn = $database['dsn'] . ';dbname=' . $database['name'];
         $this->pdo = new \PDO($dsn, $database['user'], $database['pass']);
+        $tables = require ROOT . "/config/initialTables.php";
+        foreach ($tables as $createCommand) {
+            $this->pdo->exec($createCommand);
+        }
+
     }
 
     public static function instance(){
