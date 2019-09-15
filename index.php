@@ -9,7 +9,6 @@ require_once "vendor/libs/libft.php";
 spl_autoload_register(function ($class) {
     $replaced = str_replace('\\', '/', $class);
     $file = ROOT . "/$replaced.php";
-    #echo "$file<br>";
     if (is_file($file)) {
         require_once $file;
     }

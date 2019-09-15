@@ -12,7 +12,6 @@
     <li><a href="/user/login">Login</a></li>
     <li><a href="/user/logout">Logout</a></li>
     </ul>
-    <b>DEFAULT LAYOUT</b>
 
     <?php if (isset($_SESSION['errorList'])): ?>
         <div class="registration-error">
